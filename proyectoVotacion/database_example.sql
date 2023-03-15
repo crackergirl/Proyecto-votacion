@@ -1,12 +1,11 @@
-CREATE DATABASE patata;
-use patata;
+CREATE DATABASE voting_data;
+use voting_data;
 
-CREATE TABLE users(
+CREATE TABLE votation (
     id int not null AUTO_INCREMENT,
-    username varchar(100) NOT NULL,
-    pass varchar(100) NOT NULL,
+    category ENUM('cat', 'dog') NOT NULL,
     PRIMARY KEY (id)
 );
 
-INSERT INTO users(username, pass)
-VALUES ("John", "Andersen"), ("Emma", "Smith");
+INSERT INTO votation(category)
+VALUES ('cat'), ('dog'),('cat'),('dog'), ('dog');
