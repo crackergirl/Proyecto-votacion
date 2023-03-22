@@ -1,0 +1,28 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+- name: my-api-server
+  url: http://web:5000/
+  routes:
+  - name: my-api-server
+    paths:
+      - /
+- name: my-back
+  url: http://web:5000/api/v1/votation/
+  routes:
+  - name: my-back
+    paths:
+      - /api/v1/votation/
+  plugins:
+    - name: key-auth
+
+consumers:
+- username: my-user
+  keyauth_credentials:
+  - key: key-auth
+
+plugins:
+- name: file-log
+  config: 
+    path: /tmp/file.log

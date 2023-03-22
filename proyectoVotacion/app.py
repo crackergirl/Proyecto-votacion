@@ -24,6 +24,7 @@ def voting():
         db.close()
         return render_template('voting.html', dog_votes= "Número de votos: " + str(dogs), cat_votes= "Número de votos: " + str(cats))
       return render_template('voting.html', dog_votes= "", cat_votes= "")
+    
     except:
       message = {
         'message': 'Error internal'
@@ -44,6 +45,7 @@ def getCats():
     resp = jsonify(message)
     resp.status_code = 200
     return resp
+  
   except:
     message = {
        'message': 'Error internal'
@@ -64,6 +66,7 @@ def getDogs():
     resp = jsonify(message)
     resp.status_code = 200
     return resp
+  
   except:
     message = {
        'message': 'Error internal'

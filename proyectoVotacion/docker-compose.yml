@@ -1,16 +1,26 @@
 version: "3.9"
 services:
+  kong:
+    image: kong:3.1.1
+    container_name: kong
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/kong/declarative/kong.yml
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./kong.yml:/kong/declarative/kong.yml
+      - ./logs:/tmp
   web:
     build: 
       context: .
       dockerfile: Dockerfile-python
     container_name: web
     ports:
-      - "8000:5000"
+      - "5000"
     depends_on:
       mysql:
         condition: service_healthy
-
   mysql:
     build: 
       context: .
