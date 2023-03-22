@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" style="background: linear-gradient(-54deg, rgb(195,191,245), white), rgb(81,46,221);">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>Registro</title>
+        <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/assets/fonts/ionicons.min.css">
+        <link rel="stylesheet" href="/static/assets/css/Navigation-with-Button.css">
+        <link rel="stylesheet" href="/static/assets/css/stylesLogin.css">
+    </head>
+    <body style="height: 798px;">
+        <div class="login" style="height: 515px;padding: 50px 0px;text-align: center;">
+            <form  action = "index.php?accion=principal&id=2" method = "POST" onsubmit="return checkall();"style="width: 414.906px;height: 683px;padding: 50px 70px;">
+                <h3 style="margin-left: 0px;padding-left: 0px;text-align: center;margin-bottom: 30px;">Registrar</h3>
+                <div class="form-group" style="width: 274.891px;"><input class="shadow form-control item" type="text" id="name" value="" style="width: 274.891px;margin-bottom: 25px;padding: 10px 20px;margin-left: 0px;border-radius: 10px;" name="name" placeholder="Name" required="" minlength="4" maxlength="15" pattern="^[a-zA-Z0-9_.-]*$"></div>
+                <div class="form-group" style="width: 274.891px;"><input class="shadow form-control item" type="text"  id="username" value="" style="width: 274.891px;margin-bottom: 25px;padding: 10px 20px;margin-left: 0px;border-radius: 10px;" name="username" placeholder="Username" required="" minlength="4" maxlength="15" pattern="^[a-zA-Z0-9_.-]*$"></div>
+                <div class="form-group"><input class="shadow form-control item" type="password" id="password" value=""  style="padding: 10px 20px;border-radius: 10px;margin-bottom: 25px;" placeholder="Password" name="password" required="" minlength="4"></div>
+                <div class="form-group"><input class="shadow form-control item" type="email" id="email" value=""  name="email" placeholder="Email" style="padding: 10px 20px;border-radius: 10px;margin-bottom: 25px;" required=""></div>
+                <div class="form-group" style="font-size: 18px;"><button class="btn btn-primary" id="registrar" type="submit" style="width: 274.891px;height: 47px;border-radius: 30px;background: rgb(81,46,221);"onclick="verify();" >Registrar</button></div>
+                <a href="" >Si ya dispones de una cuenta clica aqui.</a>
+            </form>
+        </div>
+        <script src="/static/assets/js/jquery.min.js"></script>
+        <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>
