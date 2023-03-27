@@ -33,7 +33,7 @@ services:
       - "33000:3306"
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
+      timeout: 30s
       retries: 5
       interval: 10s
 

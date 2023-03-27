@@ -8,12 +8,30 @@ services:
   - name: my-api-server
     paths:
       - /
-- name: my-back
-  url: http://web:5000/api/v1/votation/
+- name: reset-apikey
+  url: http://web:5000/api/v1/reset
   routes:
-  - name: my-back
+  - name: reset-apikey
     paths:
-      - /api/v1/votation/
+      - /api/v1/reset
+  plugins:
+    - name: key-auth
+
+- name: drop-apikey
+  url: http://web:5000/api/v1/drop
+  routes:
+  - name: drop-apikey
+    paths:
+      - /api/v1/drop
+  plugins:
+    - name: key-auth
+
+- name: new-apikey
+  url: http://web:5000/api/v1/new
+  routes:
+  - name: new-apikey
+    paths:
+      - /api/v1/new
   plugins:
     - name: key-auth
 
