@@ -1,4 +1,4 @@
-# HERRAMIENTAS PARA LA GESTIÓN DE PROYECTOS
+# SELECCIÓN DE MOTOR DE BASE DE DATOS
 
 * Estado: propuesta
 * Responsables: Oihana, Juana, Nadia y Ainara
@@ -72,3 +72,26 @@ https://mariadb.org/
 * Positivo, MariaDB tiene una interfaz de usuario intuitiva y fácil de usar, lo que la hace una buena opción para usuarios nuevos o menos experimentados.
 * Negativo, algunas de sus herramientas y características avanzadas pueden requerir una licencia o suscripción, lo que puede aumentar el costo.
 * Negativo, la configuración y administración de la base de datos puede requerir cierta experiencia técnica.
+
+
+# SELECCIÓN DE ESTRUCTURA DE LA BASE DE DATOS
+
+## Decisión
+En la estructura seleccionada se crea una tabla por cada votación activa. Cada tabla tendrá dos campos. Primero el id de la votación que actúa como clave primaria de cada tabla. Segundo el nombre de la categoría a la que corresponde el voto. Por lo tanto, por cada voto se escribirá un nuevo registro en la tabla con el id y la categoría a la que se vota. Las tablas de cada votación son independientes, no hay relación entre ellas.
+
+```
+CREATE TABLE {} (
+                    id int not null AUTO_INCREMENT,
+                    category ENUM({}) NOT NULL,
+                    PRIMARY KEY (id)
+                )
+```
+### Consecuencias
+
+#### Positivas
+De esta manera aseguramos que los votos que actualicen siempre en la base de datos y que no haya problemas si dos usuarios diferentes están votando al mismo tiempo. Esto es porque no actualizan un valor sino que siempre crean uno nuevo, no realizan una acción sobre los votos que ya están insertados en la base de datos.
+
+### Negativas
+Si la aplicación obtiene una gran afluencia de votos puede hacer que las operaciones de la base de datos se ralenticen. Además, hay una gran cantidad de redundancia ya que constantemente se están escribiendo los mismos valores. 
+Llegados a esta punto podemos implementar una estructura alternativa en la que en cada tabla de votación se almacene el nombre de cada categoría como clave primaria y se vaya actualizando el numero votos mediante consultas UPDATE, sumándole uno al valor actual.
+Esta solución no tiene redundancia y la cantidad de datos o registros es mucho menor. Pero en este caso, que dos personas actualicen el número de votos al mismo tiempo sí que es un problema porque puede llegar a haber un desfase de votos. Por defecto el Connector/Python no autocompila, es importante llamar a commit() después de cada transacción para que modifique los datos en las tablas.
