@@ -14,3 +14,6 @@ Se han definido 5 objetivos:
 - clean-volume: elimina datos generados por los dockers
 
 Para usar makefile basta con escribir make objetivo (ejemplo make clean-volume) en la terminal. Si solo se escribe make ejecutará el objetivo all.
+
+El makefile esta probado en un dispositivo macos. Si no funciona en otro sistema operativo como windows, cambiar en el archivo makefile rm por kill.
+
