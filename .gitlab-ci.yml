@@ -1,0 +1,46 @@
+image:
+  name: docker:20.10.16-dind
+
+services:
+  - docker:dind
+
+.install_dependencies:
+  before_script:
+    - pip install flask
+    - pip install mysql-connector-python
+
+stages:
+  - review
+  - build
+
+flake8:
+  stage: review
+  image: registry.gitlab.com/mafda/python-linting
+  script: flake8 --ignore=E501,E111,E722,E251
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+
+pylint:
+  stage: review
+  image: registry.gitlab.com/mafda/python-linting
+  extends: .install_dependencies
+  script: find . -type f -name "*.py" | xargs pylint --disable=C0103,W0311,W0702,C0301,C0114
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+
+build_job:
+  stage: build
+  needs: [flake8, pylint]
+  before_script:
+      - export KONG_KEY=${KONG_KEY}
+  script:
+      - cd proyectoVotacion
+      - docker compose up -d
+      - docker exec web python -m unittest test_mock.py
+      - docker compose stop
+      - docker rm $(docker ps -a -q)
+      - docker image rm  $(docker images -a -q)
+      - docker volume rm $(docker volume ls -q)
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
