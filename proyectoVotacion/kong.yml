@@ -38,7 +38,7 @@ services:
 consumers:
 - username: my-user
   keyauth_credentials:
-  - key: ley-auth
+  - key: key-auth
 
 plugins:
 - name: file-log
