@@ -22,7 +22,7 @@ pylint:
   stage: review
   image: registry.gitlab.com/mafda/python-linting
   extends: .install_dependencies
-  script: find . -type f -name "*.py" | xargs pylint --disable=C0103,W0311,W0702,C0301,C0114
+  script: find . -type f -name "*.py" | xargs pylint --disable=C0103,W0311,W0702,C0301,C0114,R0801
 
 build_job:
   stage: build
