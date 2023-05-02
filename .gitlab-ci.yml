@@ -27,8 +27,6 @@ pylint:
 build_job:
   stage: build
   needs: [flake8, pylint]
-  before_script:
-      - export KONG_KEY=${KONG_KEY}
   script:
       - cd proyectoVotacion
       - docker compose up -d

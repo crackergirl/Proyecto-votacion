@@ -38,7 +38,7 @@ services:
 consumers:
 - username: my-user
   keyauth_credentials:
-  - key: ${KONG_KEY}
+  - key: ley-auth
 
 plugins:
 - name: file-log
