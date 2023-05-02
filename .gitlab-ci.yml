@@ -29,6 +29,7 @@ build_job:
   needs: [flake8, pylint]
   script:
       - cd proyectoVotacion
+      - export KONG_KEY="$KONG_KEY"
       - docker compose up -d
       - docker exec web python -m unittest test_mock.py
       - docker compose stop
