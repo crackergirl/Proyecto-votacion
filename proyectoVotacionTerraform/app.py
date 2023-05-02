@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, jsonify
 import re
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ def removePunctuationSymbols(text):
     return re.sub(' +', '', text)
 
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET', 'POST'])
 def votingCatsDogs():
     """Obtener datos para la página web."""
     try:
@@ -36,7 +36,7 @@ def votingCatsDogs():
 
     except:
       message = {
-            'message': 'Error internal'
+          'message': 'Error internal'
       }
       resp = jsonify(message)
       resp.status_code = 500
