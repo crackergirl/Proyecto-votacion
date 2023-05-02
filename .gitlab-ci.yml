@@ -27,9 +27,10 @@ pylint:
 build_job:
   stage: build
   needs: [flake8, pylint]
+  before_script: 
+      - export KONG_KEY="$KONG_KEY"
   script:
       - cd proyectoVotacion
-      - export KONG_KEY="$KONG_KEY"
       - docker compose up -d
       - docker exec web python -m unittest test_mock.py
       - docker compose stop
