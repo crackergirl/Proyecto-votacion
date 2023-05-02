@@ -1,6 +1,9 @@
 # PROYECTO DE VOTACIÓN
 Creación de una página web para votación.  El proyecto se va a desarrollar en Python Flask utilizando como IDE Visual Studio Code. También se va ha hacer uso de Docker para correr la aplicación final. La aplicación se va a desplegar en arquitecturas cloud de AWS haciendo uso de Terraform y además va a contar con una API mediante la cual se podrán consultar diferentes servicios de la aplicación.
 
+En el directorio proyectoVotacion se encuentra el despliegue de nuestra app votación en local usando docker.
+En el directorio proyectoVotacionTerraform se encuetra el despliegue de nuestra app votación en aws usando terraform.
+
 ## EQUIPO
 Para este proyecto se definen 3 equipos.
 * El equipo de desarrollo es el responsable de las tareas propias de desarrollo.
