@@ -5,7 +5,7 @@ Primero hay que instalarse AWS CLI en nuestro ordenador. Es una herramienta de c
 Previamente, hay que acceder a la cuenta de aws y en el servicio ECR crear un repositorio. La imagen que se va a subir al repositorio es el Dockerfile que aparece en proyectoVotacionTerraform. 
 
 Para crear la imagen Dockerfile en docker, hay que iniciar nuestra cuenta de docker y posteriormente, ejecutar este comando: 
-"docker build -t <nombreImagen> .".
+"docker build -t -nombreImagen-.".
 
 Se ha creado el script pushContainer.sh para automatizar la subida. Dentro del archivo tenemos que especificar estas 4 variables:
 
