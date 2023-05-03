@@ -28,7 +28,7 @@ Buenas prácticas:
 - Test unitarios
 - Definir normas de nombrado de variables y funciones
 - Utilizar un IDE (Visual Studio)
-- Comentar o documentar el código.
+- Comentar o documentar el código
 
 ## HERRAMIENTAS
 -	Gitlab
