@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,Response,jsonify
+from flask import Flask, render_template, request, Response, jsonify
 import re
 from back import Database
 import os
@@ -27,11 +27,11 @@ def votingCatsDogs():
         db = Database(config)
         db = Database(config)
         if request.form.get('cat') == 'votar':
-          db.vote('votation','cat')
+          db.vote('votation', 'cat')
         elif request.form.get('dog') == 'votar':
-          db.vote('votation','dog')
-        cats = db.getVotes('votation','cat')
-        dogs = db.getVotes('votation','dog')
+          db.vote('votation', 'dog')
+        cats = db.getVotes('votation', 'cat')
+        dogs = db.getVotes('votation', 'dog')
         db.close()
         return render_template('voting.html', dog_votes= "Número de votos: " + str(dogs), cat_votes= "Número de votos: " + str(cats))
       return render_template('voting.html', dog_votes= "", cat_votes= "")

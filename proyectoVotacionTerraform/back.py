@@ -10,7 +10,7 @@ class Database:
         self._cursor = self._conn.cursor(buffered=True)
 
     def initDatabase(self):
-        sql = """ 
+        sql = """
                 CREATE TABLE votation (
                     id int not null AUTO_INCREMENT,
                     category ENUM('cat', 'dog') NOT NULL,
@@ -19,8 +19,8 @@ class Database:
             """
         self._cursor.execute(sql)
         self._conn.commit()
-        sql = """ 
-                INSERT INTO votation(category) VALUES ('cat'), ('dog'),('cat'),('dog'), ('dog')
+        sql = """
+                INSERT INTO votation(category) VALUES ('cat'), ('dog'), ('cat'), ('dog'), ('dog')
             """
         self._cursor.execute(sql)
         self._conn.commit()
