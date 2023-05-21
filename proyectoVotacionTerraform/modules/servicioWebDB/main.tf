@@ -96,6 +96,7 @@ resource "aws_security_group" "service_security_group" {
     to_port   = 0
     protocol  = "-1"
     # Only allowing traffic in from the load balancer security group
+    //security_groups = ["${var.load_balancer_security_group_kong}"]
     security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
   }
 
@@ -165,4 +166,3 @@ resource "aws_lb_listener" "listener" {
 output "app_url" {
   value = aws_alb.application_load_balancer.dns_name
 }
-
