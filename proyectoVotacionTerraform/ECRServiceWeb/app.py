@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,Response,jsonify
+from flask import Flask, render_template, request, Response, jsonify
 import re
 from back import Database
 import os
@@ -15,27 +15,28 @@ config = {
 db = Database(config)
 db.initDatabase()
 
+
 def removePunctuationSymbols(text):
     accepted_chars = re.compile(r'[^0-9a-z]')
     text = accepted_chars.sub(' ', text).strip()
     return re.sub(' +', '', text)
 
-@app.route('/', methods=['GET','POST'])
+
+@app.route('/', methods=['GET', 'POST'])
 def votingCatsDogs():
     try:
       if request.method == 'POST':
         db = Database(config)
         db = Database(config)
         if request.form.get('cat') == 'votar':
-          db.vote('votation','cat')
+          db.vote('votation', 'cat')
         elif request.form.get('dog') == 'votar':
-          db.vote('votation','dog')
-        cats = db.getVotes('votation','cat')
-        dogs = db.getVotes('votation','dog')
+          db.vote('votation', 'dog')
+        cats = db.getVotes('votation', 'cat')
+        dogs = db.getVotes('votation', 'dog')
         db.close()
-        return render_template('voting.html', dog_votes= "Número de votos: " + str(dogs), cat_votes= "Número de votos: " + str(cats))
-      return render_template('voting.html', dog_votes= "", cat_votes= "")
-    
+        return render_template('voting.html', dog_votes="Número de votos: " + str(dogs), cat_votes="Número de votos: " + str(cats))
+      return render_template('voting.html', dog_votes="", cat_votes = "")
     except:
       message = {
         'message': 'Error internal'
@@ -43,7 +44,8 @@ def votingCatsDogs():
       resp = jsonify(message)
       resp.status_code = 500
       return resp
-    
+
+
 @app.route('/api/v1/vote/<votation>', methods=['POST'])
 def vote(votation):
   """Votar en una categoría."""
@@ -196,7 +198,6 @@ def getCategoryVotes(votation, category):
     resp = jsonify(message)
     resp.status_code = 200
     return resp
-
   except:
     message = {
         'message': 'Error internal'
