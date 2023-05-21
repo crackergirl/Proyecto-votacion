@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, Response, jsonify
 import re
-from back import Database
 import os
+from flask import Flask, render_template, request, Response, jsonify
+from back import Database
+
 
 app = Flask(__name__)
 
@@ -12,8 +13,9 @@ config = {
     'db': os.getenv("NAME_DATABASE"),
 }
 
-db = Database(config)
-db.initDatabase()
+dbinit = Database(config)
+dbinit.initDatabase()
+dbinit.close()
 
 
 def removePunctuationSymbols(text):
