@@ -10,6 +10,7 @@ class Database:
         self._cursor = self._conn.cursor(buffered=True)
 
     def initDatabase(self):
+        """Inicializar la base de datos."""
         sql = """
                 CREATE TABLE votation (
                     id int not null AUTO_INCREMENT,

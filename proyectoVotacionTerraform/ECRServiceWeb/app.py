@@ -17,6 +17,7 @@ db.initDatabase()
 
 
 def removePunctuationSymbols(text):
+    """Remover signos de puntuación."""
     accepted_chars = re.compile(r'[^0-9a-z]')
     text = accepted_chars.sub(' ', text).strip()
     return re.sub(' +', '', text)
@@ -24,9 +25,9 @@ def removePunctuationSymbols(text):
 
 @app.route('/', methods=['GET', 'POST'])
 def votingCatsDogs():
+    """Interfaz de la api."""
     try:
       if request.method == 'POST':
-        db = Database(config)
         db = Database(config)
         if request.form.get('cat') == 'votar':
           db.vote('votation', 'cat')
@@ -39,7 +40,7 @@ def votingCatsDogs():
       return render_template('voting.html', dog_votes="", cat_votes = "")
     except:
       message = {
-        'message': 'Error internal'
+          'message': 'Error internal'
       }
       resp = jsonify(message)
       resp.status_code = 500
