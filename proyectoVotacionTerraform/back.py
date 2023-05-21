@@ -24,7 +24,7 @@ class Database:
             """
         self._cursor.execute(sql)
         self._conn.commit()
-        
+ 
     def getVotes(self, table, category):
         """Obtener el número de votos de una categoría."""
         sql = "SELECT count(*) FROM {} WHERE category = '{}'".format(table, category)
