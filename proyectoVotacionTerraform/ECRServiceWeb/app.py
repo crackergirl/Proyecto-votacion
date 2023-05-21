@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, jsonify
+from flask import Flask, render_template, request,Response,jsonify
 import re
 from back import Database
 import os
@@ -20,31 +20,31 @@ def removePunctuationSymbols(text):
     text = accepted_chars.sub(' ', text).strip()
     return re.sub(' +', '', text)
 
-@app.route('/', methods = ['GET', 'POST'])
+@app.route('/', methods=['GET','POST'])
 def votingCatsDogs():
     try:
       if request.method == 'POST':
         db = Database(config)
         db = Database(config)
         if request.form.get('cat') == 'votar':
-          db.vote('votation', 'cat')
+          db.vote('votation','cat')
         elif request.form.get('dog') == 'votar':
-          db.vote('votation', 'dog')
-        cats = db.getVotes('votation', 'cat')
-        dogs = db.getVotes('votation', 'dog')
+          db.vote('votation','dog')
+        cats = db.getVotes('votation','cat')
+        dogs = db.getVotes('votation','dog')
         db.close()
         return render_template('voting.html', dog_votes= "Número de votos: " + str(dogs), cat_votes= "Número de votos: " + str(cats))
       return render_template('voting.html', dog_votes= "", cat_votes= "")
-
+    
     except:
       message = {
-          'message': 'Error internal'
+        'message': 'Error internal'
       }
       resp = jsonify(message)
       resp.status_code = 500
       return resp
-
-@app.route('/api/v1/vote/<votation>', methods = ['POST'])
+    
+@app.route('/api/v1/vote/<votation>', methods=['POST'])
 def vote(votation):
   """Votar en una categoría."""
   try:
@@ -162,7 +162,7 @@ def drop(votation):
     return resp
 
 
-@app.route('/api/v1/<votation>/<category>', methods = ['GET'])
+@app.route('/api/v1/<votation>/<category>', methods=['GET'])
 def getCategoryVotes(votation, category):
   """Obtener votos de una categoría en una votación."""
   try:
