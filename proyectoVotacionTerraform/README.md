@@ -1,7 +1,14 @@
 # ARQUITECTURA DE NUESTRO SERVICIO EN AWS
-Nuestra aplicación requiere montar dos servicios ECS: uno para kong y otro para el servicio web. Por lo tanto, van a tener sus respectivos balanceadores de carga (ELB), cluster de máquinas, tareas e imagen de docker. Tal como se observa en la imagen, el servicio de kong se comunica con el de la web. Otro aspecto a tener encuenta, es que vamos a necesitar una base de datos para almacenar las votaciones. Para ello, se empleará el servicio RDS y este se comunicará con el servicio ECS del servicio web:
+Para desarrollar nuestro proyecto en local necesitabamos 3 servicios: una base de datos, un servicio web junto con la api y finalmente el servicio de kong. Para poder desplegar dicho proyecto en un entorno cloud, vamos a necesitar los siguientes servicios:
 
-![Kong](ArquitecturaKong.jpg)
+- Dos servicios ECS: uno para kong y otro para el servicio web. Por lo tanto, van a tener sus respectivos balanceadores de carga (ELB), cluster de máquinas, tareas e imagen de docker guardada en el servicio ECR. 
+- Una instancia RDS para la base de datos.
+
+La idea de la arquitectura es montar  un blanceador de carga público apuntando al servicio de kong, de tal forma que los clientes accedan a la web a través del dns de este balanceador. El servicio de kong apunta al balanceador del servicio web, que este apunta al target group de las maquinas situadas en el servicio de la web. Para que esta arquitectura funcione mediante security groups es necesario limitar el acceso al balanceador de la web a través desde cualquier lado y solo permitir se pueda acceder desde kong. 
+
+<p align="center">
+  <img src="ArquitecturaKong.jpg" alt="Kong">
+</p>
 
 Debido a la sencillez de nuestro proyecto, para levantar Kong lo haremos a través de un archivo de configuración. Así evitaremos levantar una instancia RDS de postgres en aws y ahorrar costes. Para poder levantar el servicio de Kong, se necesita saber cual será el dns del servicio de la web. Como este proyecto se ha realizado sobre una cuenta de aws académica, no se ha podido crear un dominio a través del servicio routes 53 (no tenemos permisos). Es por eso que se ha decidido trabajar en terraform a través de una estructura de módulos, situados en el directorio modules. Dichos modulos se ejecutan en providers.tf:
 
