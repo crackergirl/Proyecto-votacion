@@ -1,6 +1,6 @@
 #configuración cuenta
 variable "id_aws" {
-  default = "420113822787"
+  default = "189931143288"
 }
 variable "region_aws" {
   default = "us-east-1"

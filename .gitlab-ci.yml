@@ -1,39 +1,147 @@
 image:
-  name: docker:20.10.16-dind
+  name: sua35/app:1.2
 
 services:
   - docker:dind
 
-.install_dependencies:
-  before_script:
-    - pip install flask
-    - pip install mysql-connector-python
-
 stages:
-  - review
+  - quality
+  - test
   - build
+  - deploy
+
+.init_terraform:
+  before_script:
+    - cd proyectoVotacionTerraform
+    - echo [default] >> credentials
+    - echo aws_access_key_id = ${AWS_ACCESS_KEY_ID} >> credentials
+    - echo aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY} >> credentials
+    - echo aws_session_token = ${AWS_SESSION_TOKEN} >> credentials
+    - export KONG_KEY= ${KONG_KEY}
+    - export DB_USER= ${DB_USER}
+    - export DB_PASSWD= ${DB_PASSWD}
+    - cat modules/configKong/main.tf
+    - cat modules/servicioWebDB/variables.tf
+    - terraform init
 
 flake8:
-  stage: review
-  image: registry.gitlab.com/mafda/python-linting
+  stage: quality
   script: flake8 --ignore=E501,E111,E722,E251
 
 pylint:
-  stage: review
-  image: registry.gitlab.com/mafda/python-linting
-  extends: .install_dependencies
-  script: find . -type f -name "*.py" | xargs pylint --disable=C0103,W0311,W0702,C0301,C0114,R0801
+  stage: quality
+  script: find . -type f -name "*.py" | xargs pylint --disable=C0103,W0311,W0702,C0301,C0114,R0801,W0621,C0209
 
-build_job:
-  stage: build
+test:
+  stage: test
+  image: docker:20.10.16-dind
+  services: 
+    - docker:dind
   needs: [flake8, pylint]
-  before_script: 
-      - export KONG_KEY="$KONG_KEY"
+  before_script:
   script:
       - cd proyectoVotacion
+      - export KONG_LOCAL= ${KONG_LOCAL}
       - docker compose up -d
       - docker exec web python -m unittest test_mock.py
       - docker compose stop
       - docker rm $(docker ps -a -q)
       - docker image rm  $(docker images -a -q)
       - docker volume rm $(docker volume ls -q)
+
+build_job:
+  stage: build
+  image: docker:20.10.16
+  script:
+      - cd proyectoVotacionTerraform/ECRServiceWeb
+      - apk add python3
+      - apk add py3-pip
+      - pip3 install awscli
+      - docker build -t prueba .
+      - REPOSITORY_URI="$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+      - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default 
+      - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
+      - aws configure set aws_session_token $AWS_SESSION_TOKEN --profile default
+      - aws configure set region $AWS_DEFAULT_REGION --profile default
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION --profile "default" | docker login --username AWS --password-stdin $REPOSITORY_URI 
+      - docker tag $IMAGE_DOCKER_NAME:latest $REPOSITORY_URI/$IMAGE_REPO_NAME:latest
+      - docker push $REPOSITORY_URI/$IMAGE_REPO_NAME:latest
+
+terraform_plan_web:
+  stage: deploy
+  extends: .init_terraform
+  script:
+    - terraform validate
+    - terraform plan -target=module.my_service
+
+terraform_apply_web:
+  stage: deploy
+  needs: [terraform_plan_web]
+  dependencies: [terraform_plan_web]
+  extends: .init_terraform
+  script:
+      - terraform plan -target=module.my_service
+      - terraform apply --auto-approve -target=module.my_service
+  artifacts:
+    paths:
+      - proyectoVotacionTerraform/terraform.tfstate
+
+terraform_config_kong:
+  stage: deploy
+  needs: [terraform_apply_web]
+  dependencies: [terraform_apply_web]
+  extends: .init_terraform
+  script:
+      - ls
+      - terraform plan -target=module.config_kong
+      - terraform apply --auto-approve -target=module.config_kong
+  artifacts:
+    paths:
+      - proyectoVotacionTerraform/ECRKong/kong.yml
+      - proyectoVotacionTerraform/terraform.tfstate
+
+terraform_build_kong:
+  stage: deploy
+  image: docker:20.10.16
+  needs: [terraform_config_kong]
+  dependencies: [terraform_config_kong]
+  script:
+      - cd proyectoVotacionTerraform/ECRKong
+      - apk add python3
+      - apk add py3-pip
+      - pip3 install awscli
+      - docker build -t $IMAGE_KONG_NAME .
+      - REPOSITORY_URI="$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+      - aws configure set region $AWS_DEFAULT_REGION --profile default 
+      - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default 
+      - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
+      - aws configure set aws_session_token $AWS_SESSION_TOKEN --profile default
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION --profile "default" | docker login --username AWS --password-stdin $REPOSITORY_URI 
+      - docker tag $IMAGE_KONG_NAME:latest $REPOSITORY_URI/$IMAGE_REPO_KONG_NAME:latest
+      - docker push $REPOSITORY_URI/$IMAGE_REPO_KONG_NAME:latest
+  artifacts:
+    paths:
+      - proyectoVotacionTerraform/terraform.tfstate
+  
+terraform_plan_kong:
+  stage: deploy
+  extends: .init_terraform
+  needs: [terraform_build_kong]
+  script:
+      - ls
+      - terraform plan -target=module.kong
+  artifacts:
+    paths:
+      - proyectoVotacionTerraform/terraform.tfstate
+
+terraform_apply_klong:
+  stage: deploy
+  extends: .init_terraform
+  needs: [terraform_plan_kong]
+  dependencies: [terraform_plan_kong]
+  script:
+      - ls
+      - terraform apply --auto-approve -target=module.kong
+  artifacts:
+    paths:
+      - proyectoVotacionTerraform/terraform.tfstate

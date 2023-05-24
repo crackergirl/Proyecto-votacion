@@ -11,7 +11,7 @@ terraform {
 provider "aws" {
   region = "us-east-1"
   profile = "default"
-  shared_credentials_file = "~/.aws/credentials"
+  shared_credentials_file = "credentials"
 }
 
 module "my_service" {
