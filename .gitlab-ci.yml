@@ -41,7 +41,7 @@ test:
   before_script:
   script:
       - cd proyectoVotacion
-      - export KONG_LOCAL= ${KONG_LOCAL}
+      - export KONG_KEY_LOCAL
       - docker compose up -d
       - docker exec web python -m unittest test_mock.py
       - docker compose stop
@@ -58,12 +58,17 @@ build_job:
       - apk add py3-pip
       - pip3 install awscli
       - docker build -t prueba .
+      - export $ACCOUNT_ID
+      - export $AWS_DEFAULT_REGION
+      - export $AWS_ACCESS_KEY_ID
+      - export $AWS_SECRET_ACCESS_KEY
+      - export $AWS_SESSION_TOKEN
       - REPOSITORY_URI="$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+      - aws configure set region $AWS_DEFAULT_REGION --profile default 
       - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default 
       - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
       - aws configure set aws_session_token $AWS_SESSION_TOKEN --profile default
-      - aws configure set region $AWS_DEFAULT_REGION --profile default
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION --profile "default" | docker login --username AWS --password-stdin $REPOSITORY_URI 
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION --profile "default" | docker login --username AWS --password-stdin $REPOSITORY_URI
       - docker tag $IMAGE_DOCKER_NAME:latest $REPOSITORY_URI/$IMAGE_REPO_NAME:latest
       - docker push $REPOSITORY_URI/$IMAGE_REPO_NAME:latest
 
@@ -85,6 +90,11 @@ terraform_apply_web:
   artifacts:
     paths:
       - proyectoVotacionTerraform/terraform.tfstate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: manual
 
 terraform_config_kong:
   stage: deploy
@@ -145,3 +155,8 @@ terraform_apply_klong:
   artifacts:
     paths:
       - proyectoVotacionTerraform/terraform.tfstate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: manual
